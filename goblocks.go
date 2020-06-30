@@ -13,7 +13,7 @@ import (
 
 type configStruct struct {
 	Separator string
-	ConfigReloadSignal int
+	ConfigReloadSignal int //currently unused
 	Actions []map[string]interface{}
 }
 
