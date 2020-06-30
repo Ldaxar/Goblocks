@@ -1,3 +1,4 @@
+#!/bin/sh
 if  test -f "$HOME/.config/goblocks.json"; then
 	echo "config exists"
 else
