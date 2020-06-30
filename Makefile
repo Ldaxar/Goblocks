@@ -1,13 +1,20 @@
 ##
-# Playground
 #
 # @file
-# @version 0.1
-run: build
-	./goblocks
-
-build: goblocks.go
+# @version 1.0
+build: config
 	go build goblocks.go
 
+config:
+	./checkConfig
 
-# end
+install: build
+	sudo cp -f goblocks /usr/local/bin/goblocks; \
+	sudo chmod 755 /usr/local/bin/goblocks
+
+uninstall:
+	sudo rm -f /usr/local/bin/goblocks
+	rm -f ${HOME}/.config/goblocks.json
+
+run: build
+	./goblocks

@@ -24,18 +24,29 @@ var signalMap map[string]int = make(map[string]int)
 func main() {
 	config, err := readConfig(os.Getenv("HOME")+"/.config/goblocks.json")
 	if  err == nil {
-		blocks = make([]string, len(config.Actions))
 		channels = make([]chan bool, len(config.Actions))
 		//recChannel is common for gothreads contributing to status bar
 		recChannel := make(chan builtins.Change)
 		for i, action := range config.Actions {
+			//Assign a cell for each separator/prefix/action/suffix
+			if config.Separator != "" {
+				blocks = append(blocks, config.Separator)
+			}
+			if value, ok := action["prefix"]; ok {
+				blocks = append(blocks, value.(string))
+			}
+			blocks = append(blocks, "action")
+			actionId := len(blocks)-1
+			if value, ok := action["suffix"]; ok {
+				blocks = append(blocks, value.(string))
+			}
 			//Create an unique channel for each action
 			channels[i] = make(chan bool)
 			signalMap["signal "+action["updateSignal"].(string)] = i
 			if (action["command"].(string))[0] == '#' {
-				go builtins.FunctionMap[action["command"].(string)](i, recChannel, channels[i], action)
+				go builtins.FunctionMap[action["command"].(string)](actionId, recChannel, channels[i], action)
 			} else {
-				go builtins.RunCmd(i, recChannel, channels[i], action)
+				go builtins.RunCmd(actionId, recChannel, channels[i], action)
 			}
 			timer := action["timer"].(string)
 			if timer != "0" {
@@ -53,7 +64,7 @@ func main() {
 				fmt.Println(res.Data)
 				blocks[res.BlockId] = "ERROR"
 			}
-			updateStatusBar(config)
+			updateStatusBar()
 		}
 	} else {
 		fmt.Println(err)
@@ -68,7 +79,7 @@ func readConfig(path string) ( config configStruct, err error) {
 		var byteValue []byte
 		byteValue, err = ioutil.ReadAll(file)
 		if err == nil {
-			json.Unmarshal([]byte(byteValue), &config)
+			err = json.Unmarshal([]byte(byteValue), &config)
 		}
 	}
 	return config, err
@@ -93,11 +104,10 @@ func handleSignals(rec chan os.Signal) {
 	}
 }
 //Craft status text out of blocks data
-func updateStatusBar(config configStruct) {
+func updateStatusBar() {
 	var builder strings.Builder
 	for _, s := range blocks {
 		builder.WriteString(s)
-		builder.WriteString(config.Separator)
 	}
 	//	fmt.Println(builder.String())
 	//	set dwm status text

@@ -1,17 +1,34 @@
 {
-	"separator": "|",
-	"configReloadSignal": 11,
+	"separator": " | ",
+	"configReloadSignal": 44,
 	"actions": 
-[
+	[
 		{
-			"prefix": "",
-			"updateSignal": 34,
-			"command": "time.sh"		
+			"prefix": "🗓 ",
+			"updateSignal": "35",
+			"command": "#Date",		
+			"format": "Monday 02/01/2006 15:04:05",		
+			"timer": "1s"
 		},
-{
-			"prefix": "",
-			"updateSignal": 25,
-			"command": "time.sh"		
+		{
+			"prefix": "🔊 ",
+			"updateSignal": "36",
+			"command": "amixer get Master | awk ' \/%\/ {print $5 $6}' | head -1 | sed -e 's\/]\\[\/ \/g'",
+			"timer": "0"
+		},
+		{
+			"prefix": "Mem: ",
+			"updateSignal": "37",
+			"command": "#Memory",
+			"suffix": "%",
+			"timer": "2s"
+		},
+		{
+			"prefix": "CPU: ",
+			"updateSignal": "38",
+			"command": "#Cpu",
+			"suffix": "%",
+			"timer": "2s"
 		}
 	]
 

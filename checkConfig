@@ -1,0 +1,6 @@
+if  test -f "$HOME/.config/goblocks.json"; then
+	echo "config exists"
+else
+	cp "goblocks.json" "$HOME/.config/goblocks.json"
+	echo "Copied default config"
+fi
