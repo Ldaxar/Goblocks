@@ -1,7 +1,7 @@
 # Goblocks
 Goblocks is a [dwm](https://dwm.suckless.org/) status bar program partially inspired by [dwmblocks](https://github.com/torrinfail/dwmblocks).
 
-![Goblocks in action](https://imgur.com/lxnWJOu)
+![Goblocks in action](https://i.imgur.com/lxnWJOu.png)
 
 It is lightweight, fast, multithreaded, well(-ish) documented and easily customizable. It is also one of very few status bars done correctly. Most of them "naively"
 scan for changes every 1s or so, whereas goblocks only updates when there are updates to be done.
@@ -71,8 +71,10 @@ When set to 0 the block will only update at startup and when **updateSignal** is
 ### Signaling Blocks
 Blocks can be updated immediately by sending the corresponding **updateSignal** to the goblocks process.
 For example, `kill -35 $(pidof goblocks)` will update the block with **updateSignal** 35.
-Alternatively, you can signal a block with `pkill -RTMIN+<x> goblocks`. Where `x` is the **updateSignal** minus 34.
+Alternatively, you can signal a block with `pkill -RTMIN+<x> goblocks` where `x` is the **updateSignal** minus 34.
 So `pkill -RTMIN+1 goblocks` will update blocks with **updateSignal** 35.
+
+> Note if multiple blocks are assigned the same **updateSignal** only the first will be updated.
 
 ## Hacking and implementation guide
 Comming soon!
