@@ -4,7 +4,7 @@
 	[
 		{
 			"updateSignal": "39",
-			"command": "curl \"wttr.in\/London?format=3\"",		
+			"command": "(sleep 5 ; curl \"wttr.in\/London?format=3\")",		
 			"timer": "45m"
 		},
 		{

@@ -32,9 +32,14 @@ func Schedule(send chan bool, duration string){
 func RunCmd(blockId int, send chan Change, rec chan bool, action map[string]interface{} ) {
 	cmdStr := action["command"].(string)
 	run := true
+
 	for run {
 		out, err := exec.Command("sh","-c",cmdStr).Output()
-		send <- Change{blockId, strings.TrimSuffix(string(out), "\n"), err == nil}
+		if err == nil {
+			send <- Change{blockId, strings.TrimSuffix(string(out), "\n"), true}
+		} else {
+			send <- Change{blockId, err.Error(), false}
+		}
 		//Block untill other thread will ping you
 		run = <- rec
 	}
