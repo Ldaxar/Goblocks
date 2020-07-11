@@ -1,7 +1,7 @@
 # Goblocks
 Goblocks is a [dwm](https://dwm.suckless.org/) status bar program partially inspired by [dwmblocks](https://github.com/torrinfail/dwmblocks).
 
-![Goblocks in action](https://i.imgur.com/lxnWJOu.png)
+![Goblocks in action](https://i.imgur.com/kH1G8tr.png)
 
 It is lightweight, fast, multithreaded, well(-ish) documented and easily customizable. It is also one of very few status bars done correctly. Most of them "naively"
 scan for changes every 1s or so, whereas goblocks only updates when there are updates to be done.
@@ -87,7 +87,7 @@ If you have trouble check out this [guideline](https://www.golangprograms.com/ge
 Some sh commands have characters (e.g. \\) which have a special meaning in JSON format. To easily escape them just dump your sh commands to
 [json formatter](https://www.freeformatter.com/json-escape.html).
 ### TODO
-1. Create a built in module that displays weather condition.
+1. ~~Create a block that displays weather condition.~~ Done
 2. Add implementation documentation
 3. Add support for colour text in blocks.
 
