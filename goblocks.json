@@ -1,8 +1,12 @@
 {
 	"separator": " | ",
-	"configReloadSignal": 44,
 	"actions": 
 	[
+		{
+			"updateSignal": "39",
+			"command": "curl \"wttr.in\/London?format=3\"",		
+			"timer": "45m"
+		},
 		{
 			"prefix": "🗓 ",
 			"updateSignal": "35",
