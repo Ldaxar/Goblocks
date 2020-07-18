@@ -5,7 +5,6 @@ import (
 	"fmt"
     "github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/cpu"
-	"math"
 )
 //blockId is automatically allocated
 //send channel is used to update blocks data
@@ -30,7 +29,7 @@ func Memory(blockId int, send chan Change, rec chan bool, action map[string]inte
 	run := true
 	for run {
 		v, _ := mem.VirtualMemory()
-		send <- Change{blockId, fmt.Sprintf("%.2f", math.Round(v.UsedPercent*100)/100), true}
+		send <- Change{blockId, fmt.Sprintf(action["format"].(string), v.UsedPercent), true}
 		//Block untill other thread will ping you
 		run = <- rec
 	}
@@ -40,7 +39,7 @@ func Cpu(blockId int, send chan Change, rec chan bool, action map[string]interfa
 	run := true
 	for run {
 		val, _ := cpu.Percent(time.Second, false)
-		send <- Change{blockId, fmt.Sprintf("%.2f", math.Round(val[0]*100)/100), true}
+		send <- Change{blockId, fmt.Sprintf(action["format"].(string), val[0]), true}
 		//Block untill other thread will ping you
 		run = <- rec
 	}

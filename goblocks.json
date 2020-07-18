@@ -25,6 +25,7 @@
 			"updateSignal": "37",
 			"command": "#Memory",
 			"suffix": "%",
+			"format": "%.2f",		
 			"timer": "2s"
 		},
 		{
@@ -32,6 +33,7 @@
 			"updateSignal": "38",
 			"command": "#Cpu",
 			"suffix": "%",
+			"format": "%.2f",		
 			"timer": "2s"
 		}
 	]
