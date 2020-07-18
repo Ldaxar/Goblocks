@@ -48,6 +48,7 @@ In order to add new block to the bar add new action object to actions array in g
 			"updateSignal": "37",
 			"command": "#Memory",
 			"suffix": "%",
+			"format": "%.2f",	
 			"timer": "2s"
 		},
 		{
@@ -55,6 +56,7 @@ In order to add new block to the bar add new action object to actions array in g
 			"updateSignal": "38",
 			"command": "#Cpu",
 			"suffix": "%",
+			"format": "%.2f",	
 			"timer": "2s"
 		}
 	]
