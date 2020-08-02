@@ -63,7 +63,9 @@ func main() {
 				fmt.Println(res.Data)
 				blocks[res.BlockId] = "ERROR"
 			}
-			updateStatusBar()
+			if err = updateStatusBar(); err != nil {
+				fmt.Fprintf(os.Stderr, "failed to update status bar: %s\n", err)
+			}
 		}
 	} else {
 		fmt.Println(err)
@@ -83,6 +85,7 @@ func readConfig(path string) ( config configStruct, err error) {
 	}
 	return config, err
 }
+
 //Goroutine that pings a channel according to received signal
 func handleSignals(rec chan os.Signal) {
 	for {
@@ -92,13 +95,14 @@ func handleSignals(rec chan os.Signal) {
 		}
 	}
 }
+
 //Craft status text out of blocks data
-func updateStatusBar() {
+func updateStatusBar() error {
 	var builder strings.Builder
 	for _, s := range blocks {
 		builder.WriteString(s)
 	}
 	//	fmt.Println(builder.String())
 	//	set dwm status text
-	exec.Command("xsetroot","-name",builder.String()).Run()
+	return exec.Command("xsetroot", "-name", builder.String()).Run()
 }
