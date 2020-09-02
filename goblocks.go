@@ -3,13 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"goblocks/util"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/skuzzymiglet/Goblocks/util"
 )
 
 type configStruct struct {
