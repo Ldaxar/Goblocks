@@ -1,4 +1,4 @@
-module goblocks
+module github.com/skuzzymiglet/Goblocks
 
 go 1.14
 
