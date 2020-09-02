@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -22,7 +23,11 @@ var channels []chan bool
 var signalMap map[string]int = make(map[string]int)
 
 func main() {
-	config, err := readConfig(os.Getenv("HOME") + "/.config/goblocks.json")
+	confDir, err := os.UserConfigDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	config, err := readConfig(filepath.Join(confDir, "goblocks.json"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,9 +51,9 @@ func main() {
 		channels[i] = make(chan bool)
 		signalMap["signal "+action["updateSignal"].(string)] = i
 		if (action["command"].(string))[0] == '#' {
-			go util.FunctionMap[action["command"].(string)](actionId, recChannel, channels[i], action)
+			go util.FunctionMap[action["command"].(string)](actionID, recChannel, channels[i], action)
 		} else {
-			go util.RunCmd(actionId, recChannel, channels[i], action)
+			go util.RunCmd(actionID, recChannel, channels[i], action)
 		}
 		timer := action["timer"].(string)
 		if timer != "0" {
@@ -65,7 +70,7 @@ func main() {
 			blocks[res.BlockID] = "ERROR"
 		}
 		if err = updateStatusBar(); err != nil {
-			fmt.Fprintf(os.Stderr, "failed to update status bar: %s\n", err)
+			log.Fatalf("failed to update status bar: %s\n", err)
 		}
 	}
 }
@@ -75,12 +80,14 @@ func readConfig(path string) (config configStruct, err error) {
 	var file *os.File
 	file, err = os.Open(path)
 	defer file.Close()
-	if err == nil {
-		var byteValue []byte
-		byteValue, err = ioutil.ReadAll(file)
-		if err == nil {
-			err = json.Unmarshal([]byte(byteValue), &config)
-		}
+	if err != nil {
+		return config, err
+	}
+	var byteValue []byte
+	byteValue, err = ioutil.ReadAll(file)
+	err = json.Unmarshal([]byte(byteValue), &config)
+	if err != nil {
+		return config, err
 	}
 	return config, err
 }
