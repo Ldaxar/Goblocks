@@ -1,7 +1,7 @@
 package util
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -20,13 +20,11 @@ type Change struct {
 //Schedule goroutine that will ping other goroutines via send channel
 func Schedule(send chan bool, duration string) {
 	u, err := time.ParseDuration(duration)
-	if err == nil {
-		for {
-			send <- true
-			time.Sleep(u)
-		}
-	} else {
-		fmt.Println("Couldn't set a scheduler due to improper time format: " + duration)
+	if err != nil {
+		log.Fatalf("Couldn't set a scheduler due to improper time format: %s\n", duration)
+	}
+	for range time.Tick(u) {
+		send <- true
 	}
 }
 
@@ -37,12 +35,11 @@ func RunCmd(blockID int, send chan Change, rec chan bool, action map[string]inte
 
 	for run {
 		out, err := exec.Command("sh", "-c", cmdStr).Output()
-		if err == nil {
-			send <- Change{blockID, strings.TrimSuffix(string(out), "\n"), true}
-		} else {
+		if err != nil {
 			send <- Change{blockID, err.Error(), false}
 		}
-		//Block untill other thread will ping you
+		send <- Change{blockID, strings.TrimSuffix(string(out), "\n"), true}
+		//Block until other thread pings
 		run = <-rec
 	}
 }
