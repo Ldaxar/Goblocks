@@ -55,7 +55,7 @@ func main() {
 		go handleSignals(util.GetSIGRTchannel())
 		//start event loop
 		for {
-			//Block untill some gothread has an update
+			//Block until some gothread has an update
 			res := <- recChannel
 			if res.Success {
 				blocks[res.BlockId] = res.Data

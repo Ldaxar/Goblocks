@@ -20,7 +20,7 @@ func Date(blockId int, send chan Change, rec chan bool, action map[string]interf
 	run := true
 	for run {
 		send <- Change{blockId, time.Now().Format(action["format"].(string)), true}
-		//Block untill other thread will ping you
+		//Block until other thread will ping you
 		run = <- rec
 	}
 }
@@ -30,7 +30,7 @@ func Memory(blockId int, send chan Change, rec chan bool, action map[string]inte
 	for run {
 		v, _ := mem.VirtualMemory()
 		send <- Change{blockId, fmt.Sprintf(action["format"].(string), v.UsedPercent), true}
-		//Block untill other thread will ping you
+		//Block until other thread will ping you
 		run = <- rec
 	}
 }
@@ -40,7 +40,7 @@ func Cpu(blockId int, send chan Change, rec chan bool, action map[string]interfa
 	for run {
 		val, _ := cpu.Percent(time.Second, false)
 		send <- Change{blockId, fmt.Sprintf(action["format"].(string), val[0]), true}
-		//Block untill other thread will ping you
+		//Block until other thread will ping you
 		run = <- rec
 	}
 }
