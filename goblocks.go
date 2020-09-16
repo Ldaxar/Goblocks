@@ -11,9 +11,9 @@ import (
 )
 
 type configStruct struct {
-	Separator string
+	Separator          string
 	ConfigReloadSignal int //currently unused
-	Actions []map[string]interface{}
+	Actions            []map[string]interface{}
 }
 
 var blocks []string
@@ -21,8 +21,8 @@ var channels []chan bool
 var signalMap map[string]int = make(map[string]int)
 
 func main() {
-	config, err := readConfig(os.Getenv("HOME")+"/.config/goblocks.json")
-	if  err == nil {
+	config, err := readConfig(os.Getenv("HOME") + "/.config/goblocks.json")
+	if err == nil {
 		channels = make([]chan bool, len(config.Actions))
 		//recChannel is common for gothreads contributing to status bar
 		recChannel := make(chan util.Change)
@@ -35,7 +35,7 @@ func main() {
 				blocks = append(blocks, value.(string))
 			}
 			blocks = append(blocks, "action")
-			actionId := len(blocks)-1
+			actionId := len(blocks) - 1
 			if value, ok := action["suffix"]; ok {
 				blocks = append(blocks, value.(string))
 			}
@@ -56,7 +56,7 @@ func main() {
 		//start event loop
 		for {
 			//Block untill some gothread has an update
-			res := <- recChannel
+			res := <-recChannel
 			if res.Success {
 				blocks[res.BlockId] = res.Data
 			} else {
@@ -71,8 +71,9 @@ func main() {
 		fmt.Println(err)
 	}
 }
+
 //Read config and map it to configStruct
-func readConfig(path string) ( config configStruct, err error) {
+func readConfig(path string) (config configStruct, err error) {
 	var file *os.File
 	file, err = os.Open(path)
 	defer file.Close()
@@ -89,7 +90,7 @@ func readConfig(path string) ( config configStruct, err error) {
 //Goroutine that pings a channel according to received signal
 func handleSignals(rec chan os.Signal) {
 	for {
-		sig := <- rec
+		sig := <-rec
 		if index, ok := signalMap[sig.String()]; ok {
 			channels[index] <- true
 		}
