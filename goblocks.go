@@ -1,27 +1,19 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"goblocks/util"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 )
-
-type configStruct struct {
-	Separator          string
-	ConfigReloadSignal int //currently unused
-	Actions            []map[string]interface{}
-}
 
 var blocks []string
 var channels []chan bool
 var signalMap map[string]int = make(map[string]int)
 
 func main() {
-	config, err := readConfig(os.Getenv("HOME") + "/.config/goblocks.json")
+	config, err := util.ReadConfig("goblocks.json")
 	if err == nil {
 		channels = make([]chan bool, len(config.Actions))
 		//recChannel is common for gothreads contributing to status bar
@@ -71,22 +63,6 @@ func main() {
 		fmt.Println(err)
 	}
 }
-
-//Read config and map it to configStruct
-func readConfig(path string) (config configStruct, err error) {
-	var file *os.File
-	file, err = os.Open(path)
-	defer file.Close()
-	if err == nil {
-		var byteValue []byte
-		byteValue, err = ioutil.ReadAll(file)
-		if err == nil {
-			err = json.Unmarshal([]byte(byteValue), &config)
-		}
-	}
-	return config, err
-}
-
 //Goroutine that pings a channel according to received signal
 func handleSignals(rec chan os.Signal) {
 	for {
@@ -96,7 +72,6 @@ func handleSignals(rec chan os.Signal) {
 		}
 	}
 }
-
 //Craft status text out of blocks data
 func updateStatusBar() error {
 	var builder strings.Builder

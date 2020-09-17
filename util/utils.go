@@ -1,10 +1,13 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -16,20 +19,23 @@ type Change struct {
 	Success bool
 }
 
+type configStruct struct {
+	Separator string
+	Actions   []map[string]interface{}
+}
 //Based on "timer" prorty from config file
 //Schedule gothread that will ping other gothreads via send channel
 func Schedule(send chan bool, duration string) {
 	u, err := time.ParseDuration(duration)
 	if err == nil {
-		for {
+		for range time.Tick(u){
 			send <- true
-			time.Sleep(u)
 		}
 	} else {
 		fmt.Println("Couldn't set a scheduler due to improper time format: " + duration)
+		send <-false
 	}
 }
-
 //Run any arbitrary POSIX shell command
 func RunCmd(blockId int, send chan Change, rec chan bool, action map[string]interface{}) {
 	cmdStr := action["command"].(string)
@@ -46,7 +52,6 @@ func RunCmd(blockId int, send chan Change, rec chan bool, action map[string]inte
 		run = <-rec
 	}
 }
-
 //Create a channel that captures all 34-64 signals
 func GetSIGRTchannel() chan os.Signal {
 	sigChan := make(chan os.Signal, 1)
@@ -56,4 +61,28 @@ func GetSIGRTchannel() chan os.Signal {
 	}
 	signal.Notify(sigChan, sigArr...)
 	return sigChan
+}
+//Read config and map it to configStruct
+func ReadConfig(configName string) (config configStruct, err error) {
+	var confDir string
+	confDir, err = os.UserConfigDir()
+	if err == nil {
+		var file *os.File
+		file, err = os.Open(filepath.Join(confDir,configName))
+		defer file.Close()
+		if err == nil {
+			var byteValue []byte
+			byteValue, err = ioutil.ReadAll(file)
+			if err == nil {
+				err = json.Unmarshal([]byte(byteValue), &config)
+			} else {
+				fmt.Println(err)
+			}
+		} else {
+			fmt.Println(err)
+		}
+	} else {
+		fmt.Println(err)
+	}
+	return config, err
 }
