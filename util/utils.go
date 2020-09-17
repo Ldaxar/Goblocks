@@ -42,7 +42,7 @@ func RunCmd(blockId int, send chan Change, rec chan bool, action map[string]inte
 		} else {
 			send <- Change{blockId, err.Error(), false}
 		}
-		//Block untill other thread will ping you
+		//Block until other thread will ping you
 		run = <-rec
 	}
 }
