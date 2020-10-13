@@ -6,9 +6,6 @@ Goblocks is a [dwm](https://dwm.suckless.org/) status bar program partially insp
 It is lightweight, fast, multithreaded, well(-ish) documented and easily customizable. It is also one of very few status bars done correctly. Most of them "naively"
 scan for changes every 1s or so, whereas goblocks only updates when there are updates to be done.
 
-## Dependencies
-Requires `xsetroot`
-
 ## Installation
 Pull this repo and run:
 ```
