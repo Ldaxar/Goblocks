@@ -66,9 +66,7 @@ func main() {
 				fmt.Println(res.Data)
 				blocks[res.BlockId] = "ERROR"
 			}
-			if err = updateStatusBar(); err != nil {
-				fmt.Fprintf(os.Stderr, "failed to update status bar: %s\n", err)
-			}
+			updateStatusBar()
 		}
 	} else {
 		fmt.Println(err)
