@@ -3,16 +3,29 @@ package main
 import (
 	"fmt"
 	"goblocks/util"
+	"log"
 	"os"
-	"os/exec"
 	"strings"
+
+	"github.com/BurntSushi/xgb"
+	"github.com/BurntSushi/xgb/xproto"
 )
 
-var blocks []string
-var channels []chan bool
-var signalMap map[string]int = make(map[string]int)
+var (
+	blocks    []string
+	channels  []chan bool
+	signalMap map[string]int = make(map[string]int)
+)
 
 func main() {
+	// setup X
+	x, err := xgb.NewConn()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer x.Close()
+	root := xproto.Setup(x).DefaultScreen(x).Root
+
 	config, err := util.ReadConfig("goblocks.json")
 	if err == nil {
 		channels = make([]chan bool, len(config.Actions))
@@ -55,14 +68,14 @@ func main() {
 				fmt.Println(res.Data)
 				blocks[res.BlockId] = "ERROR"
 			}
-			if err = updateStatusBar(); err != nil {
-				fmt.Fprintf(os.Stderr, "failed to update status bar: %s\n", err)
-			}
+			statusText := buildBar()
+			xproto.ChangeProperty(x, xproto.PropModeReplace, root, xproto.AtomWmName, xproto.AtomString, 8, uint32(len(statusText)), []byte(statusText))
 		}
 	} else {
 		fmt.Println(err)
 	}
 }
+
 //Goroutine that pings a channel according to received signal
 func handleSignals(rec chan os.Signal) {
 	for {
@@ -72,13 +85,12 @@ func handleSignals(rec chan os.Signal) {
 		}
 	}
 }
+
 //Craft status text out of blocks data
-func updateStatusBar() error {
+func buildBar() string {
 	var builder strings.Builder
 	for _, s := range blocks {
 		builder.WriteString(s)
 	}
-	//	fmt.Println(builder.String())
-	//	set dwm status text
-	return exec.Command("xsetroot", "-name", builder.String()).Run()
+	return builder.String()
 }
