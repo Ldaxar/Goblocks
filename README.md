@@ -79,9 +79,6 @@ So `pkill -RTMIN+1 goblocks` will update blocks with **updateSignal** 35.
 
 > Note if multiple blocks are assigned the same **updateSignal** only the first will be updated.
 
-## Hacking and implementation guide
-Comming soon!
-
 ## Miscellaneous
 ### Formating date with #Date built in program
 Format a reference layout parameter (**Mon Jan 2 15:04:05 MST 2006**) in a way that you would like to have your time formatted.
@@ -91,7 +88,7 @@ Some sh commands have characters (e.g. \\) which have a special meaning in JSON 
 [json formatter](https://www.freeformatter.com/json-escape.html).
 ### TODO
 1. ~~Create a block that displays weather condition.~~ Done
-2. Add implementation documentation
+2. ~~Add implementation documentation~~ Code is pretty readable and has comments. This should be enough
 3. Add support for colour text in blocks.
 
 ## Feedback
