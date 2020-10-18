@@ -2,8 +2,8 @@ package util
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -32,7 +32,7 @@ func Schedule(send chan bool, duration string) {
 			send <- true
 		}
 	} else {
-		fmt.Println("Couldn't set a scheduler due to improper time format: " + duration)
+		log.Println("Couldn't set a scheduler due to improper time format: " + duration)
 		send <-false
 	}
 }
@@ -63,26 +63,28 @@ func GetSIGRTchannel() chan os.Signal {
 	return sigChan
 }
 //Read config and map it to configStruct
-func ReadConfig(configName string) (config configStruct, err error) {
+func ReadConfig(configName string) (config configStruct) {
 	var confDir string
-	confDir, err = os.UserConfigDir()
-	if err == nil {
-		var file *os.File
-		file, err = os.Open(filepath.Join(confDir,configName))
-		defer file.Close()
-		if err == nil {
-			var byteValue []byte
-			byteValue, err = ioutil.ReadAll(file)
-			if err == nil {
-				err = json.Unmarshal([]byte(byteValue), &config)
-			} else {
-				fmt.Println(err)
-			}
-		} else {
-			fmt.Println(err)
-		}
-	} else {
-		fmt.Println(err)
+	confDir, err := os.UserConfigDir()
+	if err != nil {
+		log.Fatal(err)
 	}
-	return config, err
+
+	var file *os.File
+	file, err = os.Open(filepath.Join(confDir,configName))
+	defer file.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var byteValue []byte
+	byteValue, err = ioutil.ReadAll(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = json.Unmarshal([]byte(byteValue), &config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return config
 }
